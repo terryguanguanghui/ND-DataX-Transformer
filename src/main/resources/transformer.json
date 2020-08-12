@@ -1,0 +1,6 @@
+{
+  "name": "dx_md5",
+  "class": "com.alibaba.datax.transport.transformer.MD5Transformer",
+  "description": "Using MD5 preserve masker",
+  "developer": "nd"
+}
