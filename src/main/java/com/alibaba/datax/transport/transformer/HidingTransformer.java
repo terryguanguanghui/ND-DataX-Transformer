@@ -1,60 +1,50 @@
 package com.alibaba.datax.transport.transformer;
 
-import com.alibaba.datax.common.element.*;
+import com.alibaba.datax.common.element.Column;
+import com.alibaba.datax.common.element.Record;
+import com.alibaba.datax.common.element.StringColumn;
 import com.alibaba.datax.common.exception.DataXException;
 import com.alibaba.datax.core.transport.transformer.TransformerErrorCode;
 import com.alibaba.datax.transformer.Transformer;
-import com.alibaba.datax.transport.transformer.maskingMethods.anonymity.Hiding;
 import java.util.Arrays;
-import java.util.Date;
-
+import com.alibaba.datax.transport.transformer.hide.HidingDesensitizer;
+/**
+ * @author ND
+ */
 public class HidingTransformer extends Transformer {
 
-    public HidingTransformer(){
-        setTransformerName("dx_hiding");
-        System.out.println("Using hiding method.");
+    public HidingTransformer() {
+        setTransformerName("dx_hiding_str");
+        System.out.println("掩盖脱敏");
     }
 
     @Override
-    public Record evaluate(Record record, Object... paras){
+    public Record evaluate(Record record, Object... paras) {
         int columnIndex;
-
+        String startModle;
+        String middleModle;
+        String endModle;
         try {
-            if (paras.length < 1) {
-                throw new RuntimeException("Hiding transformer 缺少参数");
+            if (paras.length < 3) {
+                throw new RuntimeException("dx_hiding_str transformer 缺少参数 ");
             }
             columnIndex = (Integer) paras[0];
+            startModle = String.valueOf((String) paras[1]);
+            middleModle = String.valueOf((String) paras[2]);
+            endModle = String.valueOf((String) paras[3]);
         } catch (Exception e) {
             throw DataXException.asDataXException(TransformerErrorCode.TRANSFORMER_ILLEGAL_PARAMETER, "paras:" + Arrays.asList(paras).toString() + " => " + e.getMessage());
         }
-        Column column = record.getColumn(columnIndex);
-        try{
+
+        try {
+            Column column = record.getColumn(columnIndex);
             String oriValue = column.asString();
             if(oriValue == null){
                 return  record;
             }
-            Hiding masker = new Hiding();
-            if(column.getType() == Column.Type.STRING){
-                String newValue = masker.mask(column.asString());
-                record.setColumn(columnIndex, new StringColumn(newValue));
-            }
-            else if(column.getType() == Column.Type.DATE){
-                Date newValue = masker.mask(column.asDate());
-                record.setColumn(columnIndex, new DateColumn(newValue));
-            }
-            else if(column.getType() == Column.Type.LONG || column.getType()== Column.Type.INT){
-                long newValue = masker.mask(column.asLong());
-                record.setColumn(columnIndex, new LongColumn(newValue));
-            }
-            else if(column.getType() == Column.Type.BOOL){
-                boolean newValue = ((Hiding) masker).mask(column.asBoolean());
-                record.setColumn(columnIndex, new BoolColumn(newValue));
-            }
-            else if(column.getType() == Column.Type.DOUBLE){
-                double newValue = masker.mask(column.asDouble());
-                record.setColumn(columnIndex, new DoubleColumn(newValue));
-            }
-        } catch (Exception e) {
+            String newValue = HidingDesensitizer.desensitize(oriValue, startModle, middleModle, endModle);
+            record.setColumn(columnIndex, new StringColumn(newValue));
+        }catch (Exception e){
             throw DataXException.asDataXException(TransformerErrorCode.TRANSFORMER_RUN_EXCEPTION, e.getMessage(),e);
         }
         return record;

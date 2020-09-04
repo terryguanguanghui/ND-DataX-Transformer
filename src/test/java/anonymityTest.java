@@ -69,10 +69,10 @@ public class anonymityTest {
         System.out.println("取下界脱敏tests:");
         try{
             int origin_int = 1688;
-            System.out.println("int "+ origin_int + " " + FloorMasker.mask((long) origin_int, 10));
+            System.out.println("int "+ origin_int + " " + FloorMasker.mask((long) origin_int, 100));
             Double origin_double = -12.68;
             System.out.println( "Double " + origin_double + " " + FloorMasker.mask(origin_double));
-            Date ori_date = new Date();
+            Date ori_date = new Date(2020,9,3);
             System.out.println("对于今天是几号的取下界脱敏 "+ori_date+"->"+FloorMasker.mask(ori_date, "YMDHms"));
         }
         catch (Exception e)
