@@ -2,7 +2,6 @@ package com.alibaba.datax.transport.transformer.maskingMethods;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import java.util.Map;
 
 /**

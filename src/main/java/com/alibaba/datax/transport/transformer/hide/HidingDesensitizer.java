@@ -10,8 +10,9 @@ public class HidingDesensitizer {
      * 基于位置偏移脱敏
      *
      * @param target      目标字符序列对象
-     * @param start       敏感信息在原字符序列中的起始偏移
-     * @param end         敏感信息在原字符序列中的结束偏移
+     * @param start       敏感信息在原字符序列中的起始信息
+     * @param middle      敏感信息在原字符序列中的中间信息
+     * @param end         敏感信息在原字符序列中的结束信息
      * @return 脱敏后的新字符序列对象的字符数组
      */
     public static String desensitize(String target, String start,String middle, String end) {
@@ -37,12 +38,16 @@ public class HidingDesensitizer {
      * 替换字符序列中的敏感信息
      *
      * @param chars       字符序列对应的字符数组
-     * @param start       敏感信息在字符序列中的起始索引
-     * @param end         敏感信息在字符序列中的结束索引
+     * @param start       敏感信息在字符序列中的起始长度
+     * @param middle      敏感信息在字符序列中的中间长度
+     * @param end         敏感信息在字符序列中的结束长度
      */
     private static void replace(char[] chars, int start, boolean startIsMasked, int middle, boolean middleIsMasked, int end, boolean endIsMasked) {
         if(startIsMasked){
             int index = 0;
+            if(start > chars.length){
+                start = chars.length;
+            }
             while (index < start){
                 chars[index++] = PLACE_HOLDER;
             }
@@ -51,6 +56,9 @@ public class HidingDesensitizer {
         if(middleIsMasked){
             int index = start;
             int endIndex = start + middle;
+            if(endIndex > chars.length){
+                endIndex = chars.length;
+            }
             while (index < endIndex) {
                 chars[index++] = PLACE_HOLDER;
             }
@@ -58,8 +66,10 @@ public class HidingDesensitizer {
 
         if(endIsMasked){
             int index = chars.length-end;
+            if(index < 0){
+                index = 0;
+            }
             int endIndex = chars.length;
-
             while (index < endIndex) {
                 chars[index++] = PLACE_HOLDER;
             }
@@ -70,14 +80,14 @@ public class HidingDesensitizer {
     /**
      * 校验起始偏移和结束偏移的合法性
      *
-     * @param startOffset 敏感信息在原字符序列中的起始偏移
-     * @param endOffset   敏感信息在原字符序列中的结束偏移
-     * @param target      原字符序列
+     * @param startOffset  敏感信息在原字符序列中的起始长度
+     * @param middleOffset 敏感信息在原字符序列中的中间长度
+     * @param endOffset    敏感信息在原字符序列中的结束长度
+     * @param target       原字符序列
      */
     private static void check(int startOffset,int middleOffset, int endOffset, String target) {
         if (startOffset < 0 || middleOffset < 0 ||
-                endOffset < 0 ||
-                startOffset + endOffset + middleOffset > target.length()) {
+                endOffset < 0 ) {
             throw new IllegalArgumentException("startOffset: " + startOffset + ", " + "middleOffset: " + middleOffset + ", " + "endOffset: " + endOffset + ", " + "target: " + target);
         }
     }
@@ -95,7 +105,7 @@ public class HidingDesensitizer {
     }
 
     public static void main(String[] args) {
-        String t = desensitize("668888888888","3:1", "4:1", "1:1");
+        String t = desensitize("668888888888","4:0", "89:0", "2:1");
         System.out.println(t);
     }
 }

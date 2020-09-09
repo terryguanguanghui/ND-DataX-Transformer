@@ -1,6 +1,6 @@
 package com.alibaba.datax.transport.transformer.maskingMethods.reversiblePermutation;
 
-import com.alibaba.datax.transport.transformer.maskingMethods.utils.math.algorithm.RailFenceUtil;
+import com.alibaba.datax.transport.transformer.maskingMethods.utils.RailFenceUtil;
 
 import java.util.List;
 

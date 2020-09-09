@@ -1,16 +1,13 @@
 package com.alibaba.datax.transport.transformer.maskingMethods.cryptology;
 
 import com.alibaba.datax.transport.transformer.maskingMethods.utils.AESCipher;
+import com.alibaba.datax.transport.transformer.maskingMethods.utils.FPEncryptionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author ggh
- */
-public class AESEncryptionImpl extends CryptologyMasking{
+public class FPEEncryptionImpl {
 
-    @Override
     public double execute(double d) throws Exception {
         return 0;
     }
@@ -22,7 +19,7 @@ public class AESEncryptionImpl extends CryptologyMasking{
      * @throws Exception
      */
     public String execute(String originData) throws Exception {
-        return AESCipher.encrypt(originData);
+        return FPEncryptionUtils.encrypt(originData);
     }
 
     /**
@@ -34,11 +31,10 @@ public class AESEncryptionImpl extends CryptologyMasking{
     public List<String> execute(List<String> originData) throws Exception {
         List<String> cipherData = new ArrayList<String>();
         for (String str : originData) {
-            String cipherStr = AESCipher.encrypt(str);
+            String cipherStr = FPEncryptionUtils.encrypt(str);
             cipherData.add(cipherStr);
         }
         return cipherData;
     }
-
 
 }

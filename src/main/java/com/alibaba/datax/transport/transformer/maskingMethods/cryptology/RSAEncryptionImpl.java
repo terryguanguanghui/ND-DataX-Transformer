@@ -1,294 +1,67 @@
 package com.alibaba.datax.transport.transformer.maskingMethods.cryptology;
 
-import com.alibaba.datax.transport.transformer.maskingConfigure.RSAKey;
-import org.bouncycastle.crypto.AsymmetricBlockCipher;
-import org.bouncycastle.crypto.InvalidCipherTextException;
-import org.bouncycastle.crypto.encodings.PKCS1Encoding;
-import org.bouncycastle.crypto.engines.RSAEngine;
-import org.bouncycastle.crypto.params.RSAKeyParameters;
-import org.bouncycastle.crypto.params.RSAPrivateCrtKeyParameters;
-import org.bouncycastle.util.encoders.Hex;
-import java.io.*;
-import java.math.BigInteger;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.security.interfaces.RSAPrivateCrtKey;
-import java.security.interfaces.RSAPrivateKey;
-import java.security.interfaces.RSAPublicKey;
-import java.util.ArrayList;
-import java.util.List;
+import com.alibaba.datax.transport.transformer.maskingMethods.cryptology.tool.RSA;
 
-/**
- * RSA
- */
+public class RSAEncryptionImpl extends CryptologyMasking{
 
+    public final String clientPrivateKey = "MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAKbNojYr8KlqKD/y" +
+            "COd7QXu3e4TsrHd4sz3XgDYWEZZgYqIjVDcpcnlztwomgjMj9xSxdpyCc85GOGa0" +
+            "lva1fNZpG6KXYS1xuFa9G7FRbaACoCL31TRv8t4TNkfQhQ7e2S7ZktqyUePWYLlz" +
+            "u8hx5jXdriErRIx1jWK1q1NeEd3NAgMBAAECgYAws7Ob+4JeBLfRy9pbs/ovpCf1" +
+            "bKEClQRIlyZBJHpoHKZPzt7k6D4bRfT4irvTMLoQmawXEGO9o3UOT8YQLHdRLitW" +
+            "1CYKLy8k8ycyNpB/1L2vP+kHDzmM6Pr0IvkFgnbIFQmXeS5NBV+xOdlAYzuPFkCy" +
+            "fUSOKdmt3F/Pbf9EhQJBANrF5Uaxmk7qGXfRV7tCT+f27eAWtYi2h/gJenLrmtke" +
+            "Hg7SkgDiYHErJDns85va4cnhaAzAI1eSIHVaXh3JGXcCQQDDL9ns78LNDr/QuHN9" +
+            "pmeDdlQfikeDKzW8dMcUIqGVX4WQJMptviZuf3cMvgm9+hDTVLvSePdTlA9YSCF4" +
+            "VNPbAkEAvbe54XlpCKBIX7iiLRkPdGiV1qu614j7FqUZlAkvKrPMeywuQygNXHZ+" +
+            "HuGWTIUfItQfSFdjDrEBBuPMFGZtdwJAV5N3xyyIjfMJM4AfKYhpN333HrOvhHX1" +
+            "xVnsHOew8lGKnvMy9Gx11+xPISN/QYMa24dQQo5OAm0TOXwbsF73MwJAHzqaKZPs" +
+            "EN08JunWDOKs3ZS+92maJIm1YGdYf5ipB8/Bm3wElnJsCiAeRqYKmPpAMlCZ5x+Z" +
+            "AsuC1sjcp2r7xw==";
 
-public class RSAEncryptionImpl extends CryptologyMasking {
-    // 填充模式
-    final public static int RAW = 2;
-    final public static int PKCS1 = 1;
+    public final String clientPublicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCmzaI2K/Cpaig/8gjne0F7t3uE" +
+            "7Kx3eLM914A2FhGWYGKiI1Q3KXJ5c7cKJoIzI/cUsXacgnPORjhmtJb2tXzWaRui" +
+            "l2EtcbhWvRuxUW2gAqAi99U0b/LeEzZH0IUO3tku2ZLaslHj1mC5c7vIceY13a4h" +
+            "K0SMdY1itatTXhHdzQIDAQAB";
 
-    private RSAPublicKey publicKey;
-    private RSAPrivateKey privateKey;
-    private KeyPair pair;
-    private int keyLength = 1024;
-
-
-    /**
-     * constructor
-     * parameter keyLength
-     */
-    public RSAEncryptionImpl(int keyLength) {
-        // generate RSA Key Pair
-        this.keyLength = keyLength;
-        generateRSAKeyPair();
-    }
-
-    /**
-     * constructor
-     * no parameter
-     */
-    public RSAEncryptionImpl() {
-        // generate RSA Key Pair
-        generateRSAKeyPair();
-    }
-
-    private void generateRSAKeyPair() {
-        try {
-            publicKey = RSAKey.getPublicKey();
-            privateKey = RSAKey.getPrivateKey();
-        } catch (Exception e) {
-            System.out.println("Exception in keypair generation. Reason: " + e);
-        }
-    }
-
-    public void printRSAKeyPair() {
-        try {
-            KeyPairGenerator rsaKeyGen = KeyPairGenerator.getInstance("RSA");
-            // setKeyLength 1024,setCertaintyOfPrime
-            rsaKeyGen.initialize(keyLength, new SecureRandom());
-            KeyPair Pair = rsaKeyGen.genKeyPair();
-            System.out.println((RSAPublicKey) Pair.getPublic());
-            RSAPrivateKey priKey = (RSAPrivateKey) Pair.getPrivate();
-            RSAPublicKey pubKey = (RSAPublicKey) Pair.getPublic();
-        } catch (Exception e) {
-            System.out.println("Exception in keypair generation. Reason: " + e);
-        }
-    }
-
-    /**
-     * 使用公钥加密
-     *
-     * @return
-     * @clearBytes
-     * @type: padding type
-     */
-    public byte[] publicEncrypt(byte[] clearBytes, int type) {
-        BigInteger mod = publicKey.getModulus();
-        // 指数
-        BigInteger publicExponent = publicKey.getPublicExponent();
-        RSAKeyParameters para = new RSAKeyParameters(false, mod, publicExponent);
-
-        AsymmetricBlockCipher engine = new RSAEngine();
-        if (type == PKCS1) {
-            engine = new PKCS1Encoding(engine);
-        }
-        engine.init(true, para);
-        try {
-            byte[] data = engine.processBlock(clearBytes, 0, clearBytes.length);
-            return data;
-        } catch (InvalidCipherTextException e) {
-            e.printStackTrace();
-            System.err.println("publicEncrypt engine.processBlock error");
-        }
-        return null;
-    }
-
-    /**
-     * 使用公钥解密
-     *
-     * @param clearBytes
-     * @param type
-     * @return
-     */
-    public byte[] publicDecrypt(byte[] clearBytes, int type) {
-        BigInteger mod = publicKey.getModulus();
-        BigInteger pubExp = publicKey.getPublicExponent();
-
-        RSAKeyParameters para = new RSAKeyParameters(false, mod, pubExp);
-        AsymmetricBlockCipher engine = new RSAEngine();
-        if (type == PKCS1) {
-            engine = new PKCS1Encoding(engine);
-        }
-        engine.init(false, para);
-        try {
-            byte[] data = engine.processBlock(clearBytes, 0, clearBytes.length);
-            return data;
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.err.println("publicDecrypt engine.processBlock exception");
-        }
-        return null;
-    }
-
-    /**
-     * 使用私钥加密
-     *
-     * @param encodedBytes
-     * @param type
-     * @return
-     */
-    public byte[] privateDecrypt(byte[] encodedBytes, int type) {
-        RSAPrivateCrtKey prvCrtKey = (RSAPrivateCrtKey) privateKey;
-        BigInteger mod = prvCrtKey.getModulus();
-        BigInteger pubExp = prvCrtKey.getPublicExponent();
-        BigInteger privExp = prvCrtKey.getPrivateExponent();
-        BigInteger pExp = prvCrtKey.getPrimeExponentP();
-        BigInteger qExp = prvCrtKey.getPrimeExponentQ();
-        BigInteger p = prvCrtKey.getPrimeP();
-        BigInteger q = prvCrtKey.getPrimeQ();
-        BigInteger crtCoef = prvCrtKey.getCrtCoefficient();
-
-        RSAKeyParameters para = new RSAPrivateCrtKeyParameters(mod, pubExp, privExp, p, q, pExp, qExp, crtCoef);
-
-        AsymmetricBlockCipher engine = new RSAEngine();
-        if (type == PKCS1) {
-            engine = new PKCS1Encoding(engine);
-        }
-
-        engine.init(false, para);
-        try {
-            byte[] data = engine.processBlock(encodedBytes, 0, encodedBytes.length);
-            return data;
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.err.println("privateDecrypt engine.processBlock error");
-        }
-        return null;
-    }
-
-    /**
-     * 使用私钥解密
-     *
-     * @param encodedBytes
-     * @param type
-     * @return
-     */
-    public byte[] privateEncrypt(byte[] encodedBytes, int type) {
-        RSAPrivateCrtKey prvCrtKey = (RSAPrivateCrtKey) privateKey;
-        BigInteger mod = prvCrtKey.getModulus();
-        BigInteger pubExp = prvCrtKey.getPublicExponent();
-        BigInteger privExp = prvCrtKey.getPrivateExponent();
-        BigInteger pExp = prvCrtKey.getPrimeExponentP();
-        BigInteger qExp = prvCrtKey.getPrimeExponentQ();
-        BigInteger p = prvCrtKey.getPrimeP();
-        BigInteger q = prvCrtKey.getPrimeQ();
-        BigInteger crtCoef = prvCrtKey.getCrtCoefficient();
-        RSAKeyParameters para = new RSAPrivateCrtKeyParameters(mod, pubExp, privExp, p, q, pExp, qExp, crtCoef);
-        AsymmetricBlockCipher engine = new RSAEngine();
-        if (type == PKCS1) {
-            engine = new PKCS1Encoding(engine);
-        }
-        engine.init(true, para);
-        try {
-            byte[] data = engine.processBlock(encodedBytes, 0, encodedBytes.length);
-            return data;
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.err.println("privateEncrypt engine.processBlock error");
-        }
-        return null;
-    }
-
-    public String changeBytesToString(byte[] data) {
-        return new String(Hex.encode(data));
-    }
-
-    //override from AbstractMasking
-    @Override
-    public double execute(double epsilon) throws Exception {
-        return -1;
-    }
-
-    public String execute(String originData, int type) throws NoSuchAlgorithmException {
-        byte[] cipher = publicEncrypt(originData.getBytes(), type);
-        return changeBytesToString(cipher);
-    }
-
-    public List<String> execute(List<String> originData) throws Exception {
-        List<String> cipherData = new ArrayList<String>();
-        for (String str : originData) {
-            String cipherStr = changeBytesToString(publicEncrypt(str.getBytes(), 1));
-            cipherData.add(cipherStr);
-        }
-        return cipherData;
-    }
-
-
-    public String executeWithPublicDecrypt(String originData, int type) throws NoSuchAlgorithmException, UnsupportedEncodingException {
-        BigInteger origin = new BigInteger(originData, 16);
-        byte[] cipher = publicDecrypt(origin.toByteArray(), type);
-        String decoded = changeBytesToString(cipher);
-        BigInteger raw_code = new BigInteger(decoded, 16);
-        String result = new String(raw_code.toByteArray(), "ascii");
-        return result;
-    }
-
-    public String executeWithPublicEncrypt(String originData, int type) throws NoSuchAlgorithmException {
-        byte[] cipher = publicEncrypt(originData.getBytes(), type);
-        return changeBytesToString(cipher);
-    }
-
-    public String executeWithPrivateDecrypt(String originData, int type) throws NoSuchAlgorithmException, UnsupportedEncodingException {
-        BigInteger origin = new BigInteger(originData, 16);
-        byte[] cipher = privateDecrypt(origin.toByteArray(), type);
-        String decoded = changeBytesToString(cipher);
-        BigInteger raw_code = new BigInteger(decoded, 16);
-        String result = new String(raw_code.toByteArray(), "ascii");
-        return result;
-    }
-
-    public String executeWithPrivateEncrypt(String originData, int type) throws NoSuchAlgorithmException {
-        byte[] cipher = privateEncrypt(originData.getBytes(), type);
-        return changeBytesToString(cipher);
-    }
+    public final String serverPrivateKey = "MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBALIZ98KqgLW8IMt4" +
+            "G+N+4d3DiOiEa+5s6lCMSGE/NbU9stJEqw0EuCP54MY6JkT0HCYTCrLXqww6rSQy" +
+            "WF7BNCVGssk2XDcvSKiCz1ZMgabd6XVK5kvIycySydXQ0Ky6rnfxw8w2mllHABFv" +
+            "s1eamaHQozv18n/XGqemjW2BFy/jAgMBAAECgYAxT3FCi3SBXKnzy7hk/z9H6Bhi" +
+            "0C8V3z/stzpe+mJDYOa+wtZdD15wT4HFQFpSIwgcHo+Kvp2UEDbZ27qN2Y43AZbF" +
+            "9LOalWTRUzYtr8wL8MIbgtew/QQ9YFNWdkTZ6MxCItjD/mSz3Lrkcphvbsx4VoCV" +
+            "YIJ04r+Loi0t9g0guQJBANvkpfrq0bLVRYWfaigjkx47mr0trJkB7mjADe69Iqts" +
+            "M/2x5dHPpClDK78yzAWxU2BrYzOd31QIOm32iMIvRxUCQQDPWJPMOzcq8Jqs1PAM" +
+            "7D0hxnvF3tSJB0CJCQWdGFkJiuIYSbrWnCVF78jJyU2AK1H3RDi9BzGPL2Z3i2Si" +
+            "+9kXAkAPnKtAJl3fEY9PDmNuGCCA3AB/f/eqIV345/HVSm5kt1j1oSTNAa4JE/DO" +
+            "MWAU42MlDFrNtl69y5vCZOeOyeaFAkBOJieGmWcAozDZJWTYqg2cdk/eU08t2nLj" +
+            "c2gPPscIRrVSzC9EhhOyWV8HVv0D6s/471inPlfajNYFBp/Goj+/AkEAiejHX/58" +
+            "Vv8+ccW22RMZmyxiHcZpTw9hz7vHUCWv03+fyVGtGMhJ4xuPt8UaZm91yHSPWWar" +
+            "M8Xa7errKaXN9A==";
+    public final String serverPublicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCyGffCqoC1vCDLeBvjfuHdw4jo" +
+            "hGvubOpQjEhhPzW1PbLSRKsNBLgj+eDGOiZE9BwmEwqy16sMOq0kMlhewTQlRrLJ" +
+            "Nlw3L0iogs9WTIGm3el1SuZLyMnMksnV0NCsuq538cPMNppZRwARb7NXmpmh0KM7" +
+            "9fJ/1xqnpo1tgRcv4wIDAQAB";
 
     @Override
-    public void mask() throws Exception {
+    public double execute(double d) throws Exception {
+        return 0;
     }
 
-    public static void main(String[] args) {
-        try {
-            String content = new String("C");
-            RSAEncryptionImpl rsatest = new RSAEncryptionImpl();
-            String result = rsatest.execute(content, RAW);
-            System.out.println(result);
-            int PaddingType = RAW;
-            System.out.println("RSA加密解密\n数据加密前：" + content);
-            System.out.println("将原始数据转换为16进制表示的字串：" + rsatest.changeBytesToString(content.getBytes()));
-            String masked = rsatest.executeWithPrivateEncrypt(content, PaddingType);
-            System.out.println("私钥加密后：" + masked);
-            String decoded = rsatest.executeWithPublicDecrypt(masked, PaddingType);
-            System.out.println("解密后：" + decoded);
-            masked = rsatest.executeWithPublicEncrypt(content, PaddingType);
-            System.out.println("公钥加密后：" + masked);
-            decoded = rsatest.executeWithPrivateDecrypt(masked, PaddingType);
-            System.out.println("私钥解密后：" + decoded);
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-
-
-        //ASCII字符长度不能超过117，原因不得而知。
-        String content = new String("BKG2I");
-        RSAEncryptionImpl rsatest = new RSAEncryptionImpl();
-        System.out.println("String加密前：" + content);
-        System.out.println("字符串：" + rsatest.changeBytesToString(content.getBytes()));
-        byte[] cipher = rsatest.publicEncrypt(content.getBytes(), RAW);
-        System.out.println("公钥加密后：" + rsatest.changeBytesToString(cipher));
-        byte[] plain = rsatest.privateDecrypt(cipher, RAW);
-        System.out.println("解密后：" + new String(plain));
+    public String executeWithPrivateDecrypt(String originData) throws Exception {
+        return RSA.decrypt(originData, clientPrivateKey);
     }
+
+    public String executeWithPrivateEncrypt(String originData) throws Exception {
+        return  RSA.encrypt(originData, clientPublicKey);
+    }
+
+    public String executeWithPublicDecrypt(String originData) throws Exception {
+        return  RSA.decrypt(originData, serverPrivateKey);
+    }
+
+    public String executeWithPublicEncrypt(String originData) throws Exception {
+        return  RSA.encrypt(originData, serverPublicKey);
+    }
+
 }

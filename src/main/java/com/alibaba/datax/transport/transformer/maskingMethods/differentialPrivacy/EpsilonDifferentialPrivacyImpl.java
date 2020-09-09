@@ -1,6 +1,6 @@
 package com.alibaba.datax.transport.transformer.maskingMethods.differentialPrivacy;
 
-import com.alibaba.datax.transport.transformer.maskingMethods.utils.math.algorithm.Laplace;
+import com.alibaba.datax.transport.transformer.maskingMethods.utils.Laplace;
 
 import java.util.ArrayList;
 import java.util.List;

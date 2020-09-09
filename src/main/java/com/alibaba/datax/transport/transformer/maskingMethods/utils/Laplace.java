@@ -1,4 +1,4 @@
-package com.alibaba.datax.transport.transformer.maskingMethods.utils.math.algorithm;
+package com.alibaba.datax.transport.transformer.maskingMethods.utils;
 
 import org.apache.commons.math3.distribution.LaplaceDistribution;
 

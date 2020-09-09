@@ -11,6 +11,7 @@ public abstract class CryptologyMasking extends AbstractMasking {
     protected void setup() throws Exception {
     }
 
+    @Override
     public void mask() throws Exception {
         setup();
     }

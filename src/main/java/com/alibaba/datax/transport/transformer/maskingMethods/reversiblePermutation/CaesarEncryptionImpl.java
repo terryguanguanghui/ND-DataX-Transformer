@@ -1,5 +1,5 @@
 package com.alibaba.datax.transport.transformer.maskingMethods.reversiblePermutation;
-import com.alibaba.datax.transport.transformer.maskingMethods.utils.math.algorithm.CaesarUtil;
+import com.alibaba.datax.transport.transformer.maskingMethods.utils.CaesarUtil;
 
 import java.util.List;
 
@@ -35,6 +35,7 @@ public class CaesarEncryptionImpl extends ReversiblePermutationMasking {
         return CaesarUtil.caesarCipherDecrypt(encrytionData, k);
     }
 
+    @Override
     public void mask() throws Exception {
 
     }

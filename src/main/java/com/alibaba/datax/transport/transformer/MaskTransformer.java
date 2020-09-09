@@ -7,8 +7,9 @@ import com.alibaba.datax.common.exception.DataXException;
 import com.alibaba.datax.core.transport.transformer.TransformerErrorCode;
 import com.alibaba.datax.transformer.Transformer;
 import com.alibaba.datax.transport.transformer.maskingMethods.cryptology.AESEncryptionImpl;
-import com.alibaba.datax.transport.transformer.maskingMethods.cryptology.FormatPreservingEncryptionImpl;
+import com.alibaba.datax.transport.transformer.maskingMethods.cryptology.FPEEncryptionImpl;
 import com.alibaba.datax.transport.transformer.maskingMethods.cryptology.RSAEncryptionImpl;
+
 import java.util.Arrays;
 
 /**
@@ -22,19 +23,20 @@ public class MaskTransformer extends Transformer {
     @Override
     public Record evaluate(Record record, Object... paras) {
         String maskMethodId = "";
-        String key;
+        String key = null;
         int columnIndex;
 
         try {
-            if (paras.length != 3) {
-                throw new RuntimeException("masker paras must be 3");
+            if (paras.length < 2) {
+                throw new RuntimeException("加密脱敏 缺少参数！");
             }
 
             maskMethodId = String.valueOf((String) paras[1]);
-            System.out.println("Using " + maskMethodId + " encryption");
-
             columnIndex = (Integer) paras[0];
-            key = String.valueOf((String) paras[2]);
+            if(paras.length > 2){
+                key = String.valueOf((String) paras[2]);
+            }
+
         } catch (Exception e) {
             throw DataXException.asDataXException(TransformerErrorCode.TRANSFORMER_ILLEGAL_PARAMETER, "paras:" + Arrays.asList(paras).toString() + " => " + e.getMessage());
         }
@@ -51,24 +53,24 @@ public class MaskTransformer extends Transformer {
                 record.setColumn(columnIndex, new StringColumn(newValue));
             }
             else if(maskMethodId.equals("FPE")){
-                FormatPreservingEncryptionImpl masker = new FormatPreservingEncryptionImpl();
-                String newValue = masker.execute(oriValue);
+                FPEEncryptionImpl fpeEncryption = new FPEEncryptionImpl();
+                String newValue = fpeEncryption.execute(oriValue);
                 record.setColumn(columnIndex, new StringColumn(newValue));
             }
             else if(maskMethodId.equals("RSA")){
                 RSAEncryptionImpl masker = new RSAEncryptionImpl();
                 String newValue = "";
                 if (key.equals("private_decrypt")){
-                    newValue = masker.executeWithPrivateDecrypt(oriValue, RSAEncryptionImpl.RAW);
+                    newValue = masker.executeWithPrivateDecrypt(oriValue);
                 }
                 else if(key.equals("private_encrypt")){
-                    newValue = masker.executeWithPrivateEncrypt(oriValue, RSAEncryptionImpl.RAW);
+                    newValue = masker.executeWithPrivateEncrypt(oriValue);
                 }
                 else if(key.equals("public_decrypt")){
-                    newValue = masker.executeWithPublicDecrypt(oriValue, RSAEncryptionImpl.RAW);
+                    newValue = masker.executeWithPublicDecrypt(oriValue);
                 }
                 else if(key.equals("public_encrypt")){
-                    newValue = masker.executeWithPublicEncrypt(oriValue, RSAEncryptionImpl.RAW);
+                    newValue = masker.executeWithPublicEncrypt(oriValue);
                 }
                 record.setColumn(columnIndex, new StringColumn(newValue));
             }

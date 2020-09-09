@@ -1,4 +1,4 @@
-package com.alibaba.datax.transport.transformer.maskingMethods.utils.math.algorithm;
+package com.alibaba.datax.transport.transformer.maskingMethods.utils;
 
 import java.util.LinkedList;
 import java.util.List;

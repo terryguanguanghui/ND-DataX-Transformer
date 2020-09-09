@@ -1,7 +1,7 @@
 package com.alibaba.datax.transport.transformer.maskingMethods.irreversibleInterference;
 
 
-import com.alibaba.datax.transport.transformer.maskingMethods.utils.math.algorithm.MD5Util;
+import com.alibaba.datax.transport.transformer.maskingMethods.utils.MD5Util;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
