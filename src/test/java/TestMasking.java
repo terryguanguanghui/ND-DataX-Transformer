@@ -26,8 +26,7 @@ public class TestMasking {
     @Test
     public void testRSA() {
 
-        String rsacontent = "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjrrrrrrrrrrrrrttttttttttttttt" +
-                "tttttttttttttttttttttttttttttjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjttttttttttttttttrrr";
+        String rsacontent = "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrjjjjjjjjjjjj" ;
         try {
             RSAEncryptionImpl masker = new RSAEncryptionImpl();
             String encryptkey = masker.executeWithPrivateEncrypt(rsacontent);

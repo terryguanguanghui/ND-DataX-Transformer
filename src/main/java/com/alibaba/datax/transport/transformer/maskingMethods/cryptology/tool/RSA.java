@@ -24,7 +24,6 @@ package com.alibaba.datax.transport.transformer.maskingMethods.cryptology.tool;
  --------------------------------------------**********--------------------------------------------
  */
 
-import org.apache.log4j.Logger;
 import javax.crypto.Cipher;
 import java.math.BigInteger;
 import java.security.*;
@@ -35,7 +34,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class RSA {
-	private static final Logger log = Logger.getLogger(RSA.class);
 
 	/** 指定key的大小 */
 	private static int KEYSIZE = 2048;
@@ -179,7 +177,7 @@ public class RSA {
 		} 
 		catch (Exception e) 
 		{
-			log.error(e.getMessage(), e);
+			System.err.println(e.getMessage());
 		}
 		
 		return false;

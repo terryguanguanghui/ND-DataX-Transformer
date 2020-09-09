@@ -1,14 +1,12 @@
 package com.alibaba.datax.transport.transformer.maskingMethods.cryptology.tool;
 
-import org.apache.log4j.Logger;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 public class Digest {
-	private static final Logger log = Logger.getLogger(Digest.class);
-	public static final String ENCODE = "UTF-8"; 
+	public static final String ENCODE = "UTF-8";
 	
 	public static String signMD5(String aValue, String encoding) {
 		try {
@@ -16,10 +14,10 @@ public class Digest {
 			MessageDigest md = MessageDigest.getInstance("MD5");
 			return ConvertUtils.toHex(md.digest(input));
 		} catch (NoSuchAlgorithmException e) {
-			log.error(e.getMessage(), e);
+			System.err.println(e.getMessage());
 			return null;
 		} catch (UnsupportedEncodingException e) {
-			log.error(e.getMessage(), e);
+			System.err.println(e.getMessage());
 			return null;
 		}
 	}
@@ -30,7 +28,7 @@ public class Digest {
 			MessageDigest md = MessageDigest.getInstance("MD5");
 			return ConvertUtils.toHex(md.digest(input));
 		} catch (NoSuchAlgorithmException e) {
-			log.error(e.getMessage(), e);
+			System.err.println(e.getMessage());
 			return null;
 		}
 	}
@@ -62,7 +60,7 @@ public class Digest {
 		try {
 			md = MessageDigest.getInstance("MD5");
 		} catch (NoSuchAlgorithmException e) {
-			log.error(e.getMessage(), e);
+			System.err.println(e.getMessage());
 			return null;
 		}
 		md.update(k_ipad);
@@ -98,7 +96,7 @@ public class Digest {
 		try {
 			md = MessageDigest.getInstance("SHA");
 		} catch (NoSuchAlgorithmException e) {
-			log.error(e.getMessage(), e);
+			System.err.println(e.getMessage());
 			return null;
 		}
 		md.update(k_ipad);
@@ -128,7 +126,7 @@ public class Digest {
 		try {
 			md = MessageDigest.getInstance("SHA");
 		} catch (NoSuchAlgorithmException e) {
-			log.error(e.getMessage(), e);
+			System.err.println(e.getMessage());
 			return null;
 		}
 		return ConvertUtils.toHex(md.digest(value));
@@ -147,7 +145,7 @@ public class Digest {
 		try {
 			md = MessageDigest.getInstance(alg);
 		} catch (NoSuchAlgorithmException e) {
-			log.error(e.getMessage(), e);
+			System.err.println(e.getMessage());
 			return null;
 		}
 		return ConvertUtils.toHex(md.digest(value));

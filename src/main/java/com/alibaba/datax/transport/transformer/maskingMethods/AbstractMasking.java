@@ -1,7 +1,4 @@
 package com.alibaba.datax.transport.transformer.maskingMethods;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import java.util.Map;
 
 /**
@@ -14,7 +11,6 @@ public abstract class AbstractMasking implements Masking{
     /**
      * LOG
      */
-    protected final Log LOG = LogFactory.getLog(this.getClass());
 
     /**
      * Parameter
@@ -38,9 +34,9 @@ public abstract class AbstractMasking implements Masking{
     public void mask(Map<String, Object> map) throws Exception {
         // TODO: extract other contexts.
         execute(d);
-        LOG.info("Job Execute completed.");
+        System.out.println("Job Execute completed.");
         evaluate();
-        LOG.info("Job Evaluate completed.");
+        System.out.println("Job Evaluate completed.");
         cleanup();
     }
 
