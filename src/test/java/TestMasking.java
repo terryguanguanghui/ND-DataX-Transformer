@@ -26,7 +26,7 @@ public class TestMasking {
     @Test
     public void testRSA() {
 
-        String rsacontent = "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrjjjjjjjjjjjj" ;
+        String rsacontent = "哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈" ;
         try {
             RSAEncryptionImpl masker = new RSAEncryptionImpl();
             String encryptkey = masker.executeWithPrivateEncrypt(rsacontent);
@@ -70,7 +70,7 @@ public class TestMasking {
     @Test
     public void testFPE() {
         try {
-            String result = FPEncryptionUtils.encrypt("rrrrrrrrrrr rrrrrrrrrrr");
+            String result = FPEncryptionUtils.encrypt("hahahhahahahahahahahahahahahahahahahahahahhahahhahahahahahahahahahahahahahahahahahahhahahhahahahahahahahahahahahahahahahahahahhahahhahahahahahahahahahahahahahahahahahahhahahhahahahahahahahahahahahahahahahahahahhahahhahahahahahahahahahahahahahahahahahahhahahhahahahahahahahahahahahahahahahahahahhahahhahahahahahahahahahahahahahahahahahahhahahhahahahahahahahahahahahahahahahahahah");
             System.out.println(result);
             System.out.println(FPEncryptionUtils.decrypt(result));
         } catch (Exception e) {

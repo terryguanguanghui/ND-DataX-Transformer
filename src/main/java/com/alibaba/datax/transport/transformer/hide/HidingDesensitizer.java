@@ -58,10 +58,12 @@ public class HidingDesensitizer {
             int endIndex = start + middle;
             if(endIndex > chars.length){
                 endIndex = chars.length;
+                chars[chars.length-1] = PLACE_HOLDER;
             }
             while (index < endIndex) {
                 chars[index++] = PLACE_HOLDER;
             }
+
         }
 
         if(endIsMasked){
@@ -105,7 +107,7 @@ public class HidingDesensitizer {
     }
 
     public static void main(String[] args) {
-        String t = desensitize("668888888888","4:0", "89:0", "2:1");
+        String t = desensitize("127.0.0.1","9:0", "2:1", "80:0");
         System.out.println(t);
     }
 }
