@@ -42,6 +42,9 @@ public class HidingTransformer extends Transformer {
             if(oriValue == null){
                 return  record;
             }
+            if(oriValue.isEmpty()){
+                return  record;
+            }
             String newValue = HidingDesensitizer.desensitize(oriValue, startModle, middleModle, endModle);
             record.setColumn(columnIndex, new StringColumn(newValue));
         }catch (Exception e){

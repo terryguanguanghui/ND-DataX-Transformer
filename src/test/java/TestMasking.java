@@ -26,7 +26,7 @@ public class TestMasking {
     @Test
     public void testRSA() {
 
-        String rsacontent = "哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈" ;
+        String rsacontent = "" ;
         try {
             RSAEncryptionImpl masker = new RSAEncryptionImpl();
             String encryptkey = masker.executeWithPrivateEncrypt(rsacontent);
@@ -35,7 +35,7 @@ public class TestMasking {
 
             String encryptkey1 = masker.executeWithPublicEncrypt(rsacontent);
             System.out.println("私钥加密后：" + encryptkey1);
-            System.out.println("公钥解密后：" + masker.executeWithPublicDecrypt(encryptkey1));
+            System.out.println("公钥解密后：" + masker.executeWithPublicDecrypt("X6TqCWqN+ZcdhLJQfuJSy9hzjKMoZ7j3Ew3FCekWN2iJUov+3TVXmlK0nu6JGUG5P7XAzgzLksf1wS8hPuIc1Ubyp45IxmJDI+9vUrkaxWOrJjbscp8oHNvEItMEZvwi6Hz5VuOHJdYGYlv7uosqP2IBzOMUmDvr6KMW8WD+xVc="));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -46,7 +46,7 @@ public class TestMasking {
     public void testAES() {
         AESEncryptionImpl masker = new AESEncryptionImpl();
         try {
-            String str = "原始字符";
+            String str = "";
             System.out.println(str);
             String result = masker.execute(str);
             System.out.println(result);
@@ -70,7 +70,7 @@ public class TestMasking {
     @Test
     public void testFPE() {
         try {
-            String result = FPEncryptionUtils.encrypt("hahahhahahahahahahahahahahahahahahahahahahhahahhahahahahahahahahahahahahahahahahahahhahahhahahahahahahahahahahahahahahahahahahhahahhahahahahahahahahahahahahahahahahahahhahahhahahahahahahahahahahahahahahahahahahhahahhahahahahahahahahahahahahahahahahahahhahahhahahahahahahahahahahahahahahahahahahhahahhahahahahahahahahahahahahahahahahahahhahahhahahahahahahahahahahahahahahahahahah");
+            String result = FPEncryptionUtils.encrypt("s");
             System.out.println(result);
             System.out.println(FPEncryptionUtils.decrypt(result));
         } catch (Exception e) {
